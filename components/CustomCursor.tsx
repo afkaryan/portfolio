@@ -6,6 +6,7 @@ export const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
@@ -27,14 +28,20 @@ export const CustomCursor = () => {
     };
     const handleMouseLeave = () => setIsVisible(false);
     const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseDown = () => setIsClicked(true);
+    const handleMouseUp = () => setIsClicked(false);
 
     window.addEventListener('mousemove', updateMousePosition);
     window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('mouseenter', handleMouseEnter);
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
@@ -47,12 +54,13 @@ export const CustomCursor = () => {
       animate={{
         x: mousePosition.x - 12,
         y: mousePosition.y - 12,
-        scale: isHovering ? 2.5 : 1,
-        backgroundColor: isHovering ? "rgba(255,255,255,1)" : "rgba(255,255,255,0)",
+        scale: isClicked ? 0.7 : isHovering ? 2.5 : 1,
+        backgroundColor: isHovering || isClicked ? "rgba(255,255,255,1)" : "rgba(255,255,255,0)",
         opacity: isVisible ? 1 : 0
       }}
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
     />
   );
 };
+
 
