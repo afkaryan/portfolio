@@ -1,78 +1,110 @@
 "use client";
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import { ProjectCard } from './ProjectCard';
+
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const projects = [
     {
-        title: "AI Career Assistant Platform",
-        date: "Mar '26",
-        desc: "AI-powered platform analyzing resumes & matching skills using NLP keyword extraction & similarity scoring.",
-        tech: ["React.js", "Node.js", "MongoDB", "NLP", "JWT"]
+        title: "Lumina Vault",
+        subtitle: "Personal Media Storage",
+        img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=1200",
     },
     {
-        title: "Social Media Analytics",
-        date: "Jan '26",
-        desc: "Full-stack analytics mapping post-comment relationships with NLP sentiment analysis and dashboards.",
-        tech: ["React.js", "Express", "MongoDB", "NLP Analytics"]
+        title: "Personal Portfolio",
+        subtitle: "Interactive Portfolio",
+        img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200",
     },
     {
-        title: "BookFlicks",
-        date: "Jul '25",
-        desc: "Movie ticket booking platform with real-time seat selection, Firebase auth, and Stripe integration.",
-        tech: ["React", "Express", "Firebase", "Stripe", "Tailwind"]
+        title: "Smart Attendance & Proxy Detection System",
+        subtitle: "MERN Stack + AI System",
+        desc: "A MERN stack application for role-based attendance with proxy detection using geolocation, face recognition, and device fingerprinting.",
+        img: "https://images.unsplash.com/photo-1633113088452-6e271ee91748?q=80&w=1200",
+    },
+    {
+        title: "Velvet Pass",
+        subtitle: "Movie Ticket Platform",
+        img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1200",
     }
 ];
 
-const ProjectCard = ({ proj }: { proj: { title: string, date: string, desc: string, tech: string[] } }) => {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: cardRef,
-        offset: ["start end", "end end"]
-    });
-
-    const yMove = useTransform(scrollYProgress, [0, 1], [100, 0]);
-    const opacityMove = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-    return (
-        <motion.div 
-            ref={cardRef}
-            style={{ y: yMove, opacity: opacityMove }}
-            className="group relative bg-[#1c1c1c] border border-white/5 p-8 rounded-3xl hover:bg-[#242424] transition-all duration-300 hover:shadow-[0_10px_40px_rgba(255,255,255,0.05)] cursor-pointer flex flex-col h-full"
-        >
-            <div className="text-sm font-medium text-gray-500 mb-3">{proj.date}</div>
-            <h4 className="text-2xl font-bold mb-4 text-white group-hover:text-amber-300 transition-colors">{proj.title}</h4>
-            <p className="text-gray-400 mb-8 font-light leading-relaxed flex-grow">{proj.desc}</p>
-            <div className="flex flex-wrap gap-2 mt-auto">
-                {proj.tech.map((t: string) => (
-                    <span key={t} className="text-[11px] uppercase tracking-wider px-4 py-2 bg-white/5 rounded-full font-semibold text-gray-300 group-hover:bg-amber-300/10 group-hover:text-amber-300 transition-colors">
-                        {t}
-                    </span>
-                ))}
-            </div>
-        </motion.div>
-    );
-};
-
 export const Projects = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useGSAP(() => {
+        if (!containerRef.current) return;
+        const q = gsap.utils.selector(containerRef);
+        const cards = q('.project-grid-item');
+
+        // Defensive Reveal: preventOverlaps & fastScrollEnd
+        gsap.fromTo(cards, 
+            { opacity: 0, y: 50 }, 
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1, 
+                ease: 'power3.out', 
+                stagger: 0.15, 
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: 'top 85%',
+                    end: 'bottom 15%',
+                    toggleActions: 'play none none reverse',
+                    preventOverlaps: true,
+                    fastScrollEnd: true
+                }
+            }
+        );
+
+        // Scoped Heading Reveal
+        gsap.fromTo(q('.projects-heading'),
+            { opacity: 0, x: -30 },
+            {
+                opacity: 1,
+                x: 0,
+                duration: 1.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: q('.projects-heading'),
+                    start: "top 90%",
+                    preventOverlaps: true
+                }
+            }
+        );
+
+        ScrollTrigger.refresh();
+    }, { scope: containerRef });
+
     return (
-        <section className="min-h-screen bg-[#121212] text-white py-32 px-8 md:px-24">
-            <div className="max-w-7xl mx-auto">
-                <motion.h3 
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-                    className="text-4xl md:text-6xl font-bold mb-16 tracking-tight"
-                >
-                    Featured Work.
-                </motion.h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+        <section 
+            ref={containerRef}
+            id="work" 
+            className="w-full min-h-screen py-32 md:py-48 bg-[#050505] text-white relative z-10 overflow-hidden"
+        >
+            <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+                
+                <div className="mb-24 md:mb-32">
+                    <h2 className="projects-heading text-5xl md:text-8xl font-black tracking-tighter text-white opacity-0">
+                        Selected <span className="text-gray-600">Work.</span>
+                    </h2>
+                    <div className="w-20 h-1 bg-white/20 mt-8" />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-20 md:gap-x-12 md:gap-y-32">
                     {projects.map((proj, i) => (
-                        <ProjectCard key={i} proj={proj} />
+                        <div key={i} className="project-grid-item">
+                            <ProjectCard proj={proj} />
+                        </div>
                     ))}
                 </div>
             </div>
+            
+            <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
         </section>
     );
 };
-

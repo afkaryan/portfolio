@@ -1,66 +1,142 @@
 "use client";
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
-const arsenalItems = [
-    { category: "Languages", skills: ["Python", "C++", "C", "R", "Java", "React & Node.js"] },
-    { category: "Databases & Cloud", skills: ["MongoDB", "MS SQL", "AWS"] },
-    { category: "Data Analytics & AI", skills: ["Tableau", "Power BI", "NLP"] },
+// Icons
+import { 
+    FaReact, FaHtml5, FaCss3Alt, FaJs, FaNodeJs, FaAws, FaDocker, FaGitAlt, FaGithub, FaPython, FaBrain 
+} from 'react-icons/fa';
+import { 
+    SiNextdotjs, SiTailwindcss, SiExpress, SiFlask, SiMongodb, SiMysql, SiFirebase, SiPandas, 
+    SiNumpy, SiScikitlearn, SiRedux, SiFigma, SiVercel, SiJest 
+} from 'react-icons/si';
+
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(useGSAP);
+}
+
+const allSkills = [
+    { name: "React", icon: FaReact, color: "text-[#61DAFB]" },
+    { name: "Next.js", icon: SiNextdotjs, color: "text-white" },
+    { name: "Redux", icon: SiRedux, color: "text-[#764ABC]" },
+    { name: "Tailwind CSS", icon: SiTailwindcss, color: "text-[#38B2AC]" },
+    { name: "JavaScript", icon: FaJs, color: "text-[#F7DF1E]" },
+    { name: "Node.js", icon: FaNodeJs, color: "text-[#339933]" },
+    { name: "Express.js", icon: SiExpress, color: "text-white" },
+    { name: "Python", icon: FaPython, color: "text-[#3776AB]" },
+    { name: "Flask", icon: SiFlask, color: "text-white" },
+    { name: "MongoDB", icon: SiMongodb, color: "text-[#47A248]" },
+    { name: "MySQL", icon: SiMysql, color: "text-[#4479A1]" },
+    { name: "Firebase", icon: SiFirebase, color: "text-[#FFCA28]" },
+    { name: "AWS", icon: FaAws, color: "text-[#FF9900]" },
+    { name: "Docker", icon: FaDocker, color: "text-[#2496ED]" },
+    { name: "Vercel", icon: SiVercel, color: "text-white" },
+    { name: "GitHub", icon: FaGithub, color: "text-white" },
+    { name: "Git", icon: FaGitAlt, color: "text-[#F05032]" },
+    { name: "Pandas", icon: SiPandas, color: "text-[#150458]" },
+    { name: "NumPy", icon: SiNumpy, color: "text-[#013243]" },
+    { name: "NLP", icon: FaBrain, color: "text-cyan-300" },
+    { name: "Scikit-learn", icon: SiScikitlearn, color: "text-[#F7931E]" },
+    { name: "Figma", icon: SiFigma, color: "text-[#F24E1E]" },
+    { name: "Jest", icon: SiJest, color: "text-[#C21325]" },
+    { name: "HTML5", icon: FaHtml5, color: "text-[#E34F26]" },
+    { name: "CSS3", icon: FaCss3Alt, color: "text-[#1572B6]" },
 ];
 
-export const Skills = () => {
+const SkillPill = ({ skill }: { skill: any }) => {
+    const Icon = skill.icon;
     return (
-        <section id="arsenal" className="min-h-screen bg-[#0a0a0a] text-white py-32 px-8 md:px-24 relative z-20">
-            <div className="max-w-7xl mx-auto">
-                <motion.h3 
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-                    className="text-4xl md:text-6xl font-bold mb-16 tracking-tight"
-                >
-                    My Arsenal.
-                </motion.h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {arsenalItems.map((item, idx) => (
-                        <motion.div 
-                            key={idx} 
-                            initial={{ opacity: 0, y: 50, scale: 0.98 }}
-                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 1.2, delay: idx * 0.15, ease: [0.76, 0, 0.24, 1] }}
-                            className="bg-white/[0.02] border border-white/10 p-10 rounded-3xl hover:bg-white/[0.05] transition-all duration-300 transform-gpu hover:-translate-y-2 group/card"
-                        >
-                            <h4 className="text-xl font-semibold mb-8 text-gray-400 group-hover/card:text-gray-200 transition-colors">{item.category}</h4>
-                            <motion.ul 
-                                className="space-y-6"
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                variants={{
-                                    visible: { transition: { staggerChildren: 0.08, delayChildren: 0.3 + (idx * 0.15) } },
-                                    hidden: {}
-                                }}
-                            >
-                                {item.skills.map((skill, sIdx) => (
-                                    <motion.li 
-                                        key={sIdx} 
-                                        variants={{
-                                            hidden: { opacity: 0, x: -30, filter: "blur(4px)" },
-                                            visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }
-                                        }}
-                                        className="flex items-center text-xl md:text-2xl font-medium text-white group cursor-none"
-                                    >
-                                        <span className="w-2 h-2 rounded-full bg-amber-300 mr-4 scale-75 group-hover:scale-150 transition-all duration-500 shadow-[0_0_10px_rgba(252,211,77,0.3)]"></span>
-                                        <span className="group-hover:text-amber-300 transition-colors duration-300 group-hover:translate-x-2 inline-block transform-gpu">{skill}</span>
-                                    </motion.li>
-                                ))}
-                            </motion.ul>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </section>
+        <div className="flex items-center gap-3 px-6 py-4 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.08] hover:border-white/20 group cursor-default whitespace-nowrap">
+            <Icon className={`${skill.color} text-2xl group-hover:scale-110 transition-transform duration-500`} />
+            <span className="text-white font-black uppercase tracking-[0.2em] text-[11px] md:text-sm">
+                {skill.name}
+            </span>
+        </div>
     );
 };
 
+export const Skills = () => {
+    const sectionRef = useRef<HTMLElement>(null);
+    const carouselRef = useRef<HTMLDivElement>(null);
+    const tweenRef = useRef<gsap.core.Tween | null>(null);
+
+    useGSAP(() => {
+        if (!carouselRef.current) return;
+
+        // Infinite Linear Animation
+        tweenRef.current = gsap.to(carouselRef.current, {
+            x: "-50%",
+            duration: 35, // Premium slow speed
+            ease: "none",
+            repeat: -1,
+            onReverseComplete: () => {
+                tweenRef.current?.totalTime(tweenRef.current?.rawTime() + tweenRef.current?.duration() * 10);
+            }
+        });
+
+        // Entrance Reveal
+        gsap.fromTo(sectionRef.current,
+            { opacity: 0, y: 30 },
+            { 
+                opacity: 1, y: 0, duration: 1.5, ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top 85%"
+                }
+            }
+        );
+    }, { scope: sectionRef });
+
+    const handleMouseEnter = () => tweenRef.current?.pause();
+    const handleMouseLeave = () => tweenRef.current?.play();
+
+    return (
+        <section 
+            id="skills" 
+            ref={sectionRef} 
+            className="w-full py-32 md:py-48 bg-[#050505] text-white overflow-hidden relative z-20"
+        >
+            <div className="max-w-[1400px] mx-auto px-8 md:px-16 lg:px-24 mb-20 text-center md:text-left">
+                <div className="inline-flex items-center gap-4 mb-6">
+                    <span className="w-12 h-px bg-blue-500/50"></span>
+                    <p className="text-blue-500 uppercase tracking-[0.5em] text-[10px] font-black">
+                        TECHNOLOGIES & TOOLS
+                    </p>
+                </div>
+                <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase leading-[0.9]">
+                    My <span className="text-gray-600">Arsenal.</span>
+                </h3>
+            </div>
+
+            {/* Horizontal Carousel Container */}
+            <div 
+                className="relative w-full py-10 flex items-center"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                {/* Left/Right Fades for Premium Look */}
+                <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent z-30 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-[#050505] via-[#050505]/80 to-transparent z-30 pointer-events-none" />
+
+                <div 
+                    ref={carouselRef}
+                    className="flex gap-6 will-change-transform"
+                    style={{ width: "max-content" }}
+                >
+                    {/* First Set */}
+                    {allSkills.map((skill, i) => (
+                        <SkillPill key={`s1-${i}`} skill={skill} />
+                    ))}
+                    {/* Duplicate Set for Seamless Loop */}
+                    {allSkills.map((skill, i) => (
+                        <SkillPill key={`s2-${i}`} skill={skill} />
+                    ))}
+                </div>
+            </div>
+
+            {/* Background Texture */}
+            <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.01] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+        </section>
+    );
+};
